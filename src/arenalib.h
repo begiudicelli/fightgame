@@ -11,15 +11,15 @@
 typedef struct Spell{
 	int id;
 	char *name;
-	int damage;
+	double damage;
 	struct Spell *next;
 }Spell;
 
 typedef struct Player{
 	char *name;
 	double health;
-	double attack;
-	//Spell *SpellBar;
+	double mana;
+	Spell *spellBar;
 }Player;
 
 typedef struct Enemy{
@@ -27,6 +27,7 @@ typedef struct Enemy{
 	char *name;
 	double health;
 	double attack;
+	int spellId;
 }Enemy;
 
 typedef struct Room{
@@ -37,7 +38,7 @@ typedef struct Room{
 
 Room* createRoom(int id, Enemy *enemy);
 void addRoom(Room **head, int id, Enemy *enemy);
-Enemy* createEnemy(int id, char *name, double health, double attack);
+Enemy* createEnemy(int id, char *name, double health, double attack, int spellId);
 Enemy* getRandomEnemy();
 void battle(Player *player, Enemy *enemy);
 void gameLoop();
