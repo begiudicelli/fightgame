@@ -14,6 +14,8 @@ typedef struct Spell{
 	int id;
 	char *name;
 	double damage;
+	int cooldown;
+	int originalCooldown;
 }Spell;
 
 typedef struct Player{

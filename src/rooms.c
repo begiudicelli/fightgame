@@ -13,11 +13,13 @@ Enemy enemyPool[] = {
 
 const int enemyPoolSize = sizeof(enemyPool) / sizeof(enemyPool[0]);
 
-Spell createSpell(int id, const char *name, double damage) {
+Spell createSpell(int id, const char *name, double damage, int cooldown) {
     Spell spell;
     spell.id = id;
     spell.name = strdup(name);
     spell.damage = damage;
+    spell.cooldown = 0;
+    spell.originalCooldown = cooldown;
     return spell;
 }
 
@@ -60,10 +62,11 @@ void addRoom(Room **head, int id, Enemy *enemy) {
 void initializePlayerSpells(Player *player) {
     const char *spellNames[] = {"Fireball", "Lightning Bolt", "Healing Spell", "Icebolt", "Wind Slash", "Earthquake"};
     const double spellDamages[] = {25, 30, -20, 40, 15, 50};
+    const int spellCooldowns[] = {1, 2, 5, 3, 1,8};
 
     player->spellCount = 0;
     for (int i = 0; i < MAX_SPELLS; i++) {
-        player->spells[i] = createSpell(i + 1, spellNames[i], spellDamages[i]);
+        player->spells[i] = createSpell(i + 1, spellNames[i], spellDamages[i], spellCooldowns[i]);
         player->spellCount++;
     }
 }
@@ -71,34 +74,52 @@ void initializePlayerSpells(Player *player) {
 void useSpell(Player *player, Enemy *enemy, int spellId) {
     for (int i = 0; i < player->spellCount; i++) {
         if (player->spells[i].id == spellId) {
+            if (player->spells[i].cooldown > 0) {
+                printf("O feitiço %s está em cooldown por %d turnos!\n", player->spells[i].name, player->spells[i].cooldown);
+                return;
+            }
             enemy->health -= player->spells[i].damage;
             printf("\n%s ataca %s com %s causando %.2f de dano! Vida do inimigo: %.2f\n",
-                   player->name, player->spells[i].name, enemy->name, player->spells[i].damage, enemy->health);
+                   player->name, enemy->name, player->spells[i].name, player->spells[i].damage, enemy->health);
+
+            player->spells[i].cooldown = player->spells[i].originalCooldown;
             return;
         }
     }
 }
+
 
 void battle(Player *player, Enemy *enemy) {
     printf("%s aparece!  HP: %.2f | ATK: %.2f\n", enemy->name, enemy->health, enemy->attack);
     printf("%s esta vivo!  HP: %.2f | MP : %.2f\n", player->name, player->health, player->mana);
 
     while (player->health > 0 && enemy->health > 0) {
-        printf("Spells: \n");
-        for (int i = 0; i < player->spellCount; i++) {
-            printf("ID: %d, Nome: %s, Dano: %.2f\n", player->spells[i].id, player->spells[i].name, player->spells[i].damage);
-        }
+    	int spellId;
+        do{
+            printf("Spells: \n");
+            for (int i = 0; i < player->spellCount; i++) {
+                printf("ID: %d, Nome: %s, Dano: %.2f, Cooldown: %d\n",
+                       player->spells[i].id, player->spells[i].name, player->spells[i].damage,
+                       player->spells[i].cooldown);
+            }
 
-        int spellId;
-        printf("Escolha o id do spell: ");
-        scanf("%d", &spellId);
 
-        useSpell(player, enemy, spellId);
+            printf("Escolha o id do spell: ");
+            scanf("%d", &spellId);
 
-        if (enemy->health <= 0) {
-            printf("Voce derrotou %s!\n\n", enemy->name);
-            return;
-        }
+            if(spellId < 1 || spellId > player->spellCount){
+            	printf("ID invalido.Tente novamente\n");
+            	continue;
+            }
+
+            useSpell(player, enemy, spellId);
+
+            if (enemy->health <= 0) {
+                printf("Voce derrotou %s!\n\n", enemy->name);
+                return;
+            }
+        }while(spellId < 1 || spellId > player->spellCount || player->spells->cooldown < player->spells->originalCooldown);
+
 
         player->health -= enemy->attack;
         printf("%s ataca %s causando %.2f de dano! Vida do jogador: %.2f\n",
@@ -107,6 +128,14 @@ void battle(Player *player, Enemy *enemy) {
         if (player->health <= 0) {
             printf("%s te matou!\n", enemy->name);
             return;
+        }
+
+        //atualiza o cooldown
+        for(int i = 0; i < player->spellCount; i++){
+        	if(player->spells[i].cooldown > 0){
+        		player->spells[i].cooldown--;
+        	}
+
         }
     }
 }
