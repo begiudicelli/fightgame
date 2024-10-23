@@ -1,7 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "arenalib.h"
 
 int main(void) {
-	printf("Hello");
+	srand(time(NULL));
+	gameLoop();
+
 	return 0;
 }
