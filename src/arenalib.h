@@ -8,18 +8,20 @@
 #include <stdbool.h>
 #include <time.h>
 
+#define MAX_SPELLS 6
+
 typedef struct Spell{
 	int id;
 	char *name;
 	double damage;
-	struct Spell *next;
 }Spell;
 
 typedef struct Player{
 	char *name;
 	double health;
 	double mana;
-	Spell *spellBar;
+	Spell spells[MAX_SPELLS];
+	int spellCount;
 }Player;
 
 typedef struct Enemy{
@@ -27,7 +29,6 @@ typedef struct Enemy{
 	char *name;
 	double health;
 	double attack;
-	int spellId;
 }Enemy;
 
 typedef struct Room{
@@ -38,7 +39,7 @@ typedef struct Room{
 
 Room* createRoom(int id, Enemy *enemy);
 void addRoom(Room **head, int id, Enemy *enemy);
-Enemy* createEnemy(int id, char *name, double health, double attack, int spellId);
+Enemy* createEnemy(int id, const char *name, double health, double attack);
 Enemy* getRandomEnemy();
 void battle(Player *player, Enemy *enemy);
 void gameLoop();
