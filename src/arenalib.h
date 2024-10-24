@@ -45,5 +45,7 @@ Enemy* createEnemy(int id, const char *name, double health, double attack);
 Enemy* getRandomEnemy();
 void battle(Player *player, Enemy *enemy);
 void gameLoop();
+void printStartFight(Room* currentRoom, Player *player);
+
 
 #endif
