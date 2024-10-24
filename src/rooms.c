@@ -78,17 +78,16 @@ void initializePlayerSpells(Player *player) {
 	}
 }
 
-void useSpell(Player *player, Enemy *enemy, int spellId) {
-
+bool useSpell(Player *player, Enemy *enemy, int spellId) {
 	if (spellId < 0 || spellId >= player->spellCount) {
 		printf("ID de feitiço inválido!\n");
-		return;
+		return false;
 	}
 
 	if (player->spells[spellId].cooldown > 0) {
 		printf("O feitiço %s está em cooldown por %d turnos!\n",
 				player->spells[spellId].name, player->spells[spellId].cooldown);
-		return;
+		return false;
 	}
 
 	enemy->health -= player->spells[spellId].damage;
@@ -96,13 +95,15 @@ void useSpell(Player *player, Enemy *enemy, int spellId) {
 			player->name, enemy->name, player->spells[spellId].name,
 			player->spells[spellId].damage, enemy->health);
 
-	player->spells[spellId].cooldown = player->spells[spellId].originalCooldown;
+	player->spells[spellId].cooldown = player->spells[spellId].originalCooldown + 1;
+
+	return true;
 }
 
 void battle(Player *player, Enemy *enemy) {
 	while (player->health > 0 && enemy->health > 0) {
 		int spellId;
-
+		bool used = false;
 		printf("Spells: \n");
 		for (int i = 0; i < player->spellCount; i++) {
 			printf("ID: %d, Nome: %s, Dano: %.2f, Cooldown: %d\n",
@@ -113,28 +114,33 @@ void battle(Player *player, Enemy *enemy) {
 		printf("Escolha o id do spell: ");
 		scanf("%d", &spellId);
 
-		useSpell(player, enemy, spellId);
+		used = useSpell(player, enemy, spellId);
 
 		if (enemy->health <= 0) {
 			printf("Você derrotou %s!\n\n", enemy->name);
+			for (int i = 0; i < player->spellCount; i++) { // cleans cooldown
+					player->spells[i].cooldown = 0;
+			}
 			return;
 		}
 
-		// O inimigo ataca
-		player->health -= enemy->attack;
-		printf("%s ataca %s causando %.2f de dano! Vida do jogador: %.2f\n",
-				enemy->name, player->name, enemy->attack, player->health);
+		if(used){
+			player->health -= enemy->attack;
+			printf("%s ataca %s causando %.2f de dano! Vida do jogador: %.2f\n",
+					enemy->name, player->name, enemy->attack, player->health);
 
-		if (player->health <= 0) {
-			printf("%s te matou!\n", enemy->name);
-			return;
-		}
+			for (int i = 0; i < player->spellCount; i++) { // depois que ataca, diminue todos os cooldowns por 1
+				if (player->spells[i].cooldown > 0) {
+					player->spells[i].cooldown--;
+				}
+			}
 
-		for (int i = 0; i <= player->spellCount; i++) {
-			if (player->spells[i].cooldown > 0) {
-				player->spells[i].cooldown--;
+			if (player->health <= 0) {
+				printf("%s te matou!\n", enemy->name);
+				return;
 			}
 		}
+
 	}
 }
 void gameLoop() {

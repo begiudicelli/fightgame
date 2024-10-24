@@ -8,8 +8,6 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define MAX_SPELLS 6
-
 typedef struct Spell{
 	int id;
 	char *name;
@@ -22,7 +20,7 @@ typedef struct Player{
 	char *name;
 	double health;
 	double mana;
-	Spell spells[MAX_SPELLS];
+	Spell spells[6];
 	int spellCount;
 }Player;
 
