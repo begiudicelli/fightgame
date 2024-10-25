@@ -2,10 +2,8 @@
 
 //GLOBAL IS EVIL BUT THAT'S OKAY
 
-#define MAX_SPELLS 6
-
-Enemy enemyPool[] = { { 1, "Goblin", 30, 5 }, { 2, "Orc", 50, 10 }, { 3,
-		"Troll", 80, 15 }, { 4, "Dragon", 120, 20 } };
+Enemy enemyPool[] = { { 1, "Goblin", 30, 5, 10}, { 2, "Orc", 50, 10, 20 }, { 3,
+		"Troll", 80, 15, 40 }, { 4, "Dragon", 120, 20, 80 } };
 
 const int enemyPoolSize = sizeof(enemyPool) / sizeof(enemyPool[0]);
 
@@ -19,12 +17,13 @@ Spell createSpell(int id, const char *name, double damage, int cooldown) {
 	return spell;
 }
 
-Enemy* createEnemy(int id, const char *name, double health, double attack) {
+Enemy* createEnemy(int id, const char *name, double health, double attack, double experience) {
 	Enemy *newEnemy = (Enemy*) malloc(sizeof(Enemy));
 	newEnemy->id = id;
 	newEnemy->name = strdup(name);
 	newEnemy->health = health;
 	newEnemy->attack = attack;
+	newEnemy->experience = experience;
 	return newEnemy;
 }
 
@@ -34,13 +33,16 @@ Player* createPlayer(const char *name, double health, double mana) {
 	newPlayer->health = health;
 	newPlayer->mana = mana;
 	newPlayer->spellCount = 0;
+	newPlayer->experience = 0;
+	newPlayer->gold = 0;
+	newPlayer->level = 1;
 	return newPlayer;
 }
 
 Enemy* getRandomEnemy() {
 	int index = rand() % enemyPoolSize;
 	return createEnemy(enemyPool[index].id, enemyPool[index].name,
-			enemyPool[index].health, enemyPool[index].attack);
+			enemyPool[index].health, enemyPool[index].attack, enemyPool[index].experience);
 }
 
 Room* createRoom(int id, Enemy *enemy) {
@@ -104,13 +106,7 @@ void battle(Player *player, Enemy *enemy) {
 	while (player->health > 0 && enemy->health > 0) {
 		int spellId;
 		bool used = false;
-		printf("Spells: \n");
-		for (int i = 0; i < player->spellCount; i++) {
-			printf("ID: %d, Nome: %s, Dano: %.2f, Cooldown: %d\n",
-					player->spells[i].id, player->spells[i].name,
-					player->spells[i].damage, player->spells[i].cooldown);
-		}
-
+		printSpellBar(player);
 		printf("Escolha o id do spell: ");
 		scanf("%d", &spellId);
 
@@ -118,6 +114,7 @@ void battle(Player *player, Enemy *enemy) {
 
 		if (enemy->health <= 0) {
 			printf("Você derrotou %s!\n\n", enemy->name);
+			defeatEnemy(player, enemy->experience);
 			for (int i = 0; i < player->spellCount; i++) { // cleans cooldown
 					player->spells[i].cooldown = 0;
 			}
@@ -134,7 +131,6 @@ void battle(Player *player, Enemy *enemy) {
 					player->spells[i].cooldown--;
 				}
 			}
-
 			if (player->health <= 0) {
 				printf("%s te matou!\n", enemy->name);
 				return;
@@ -195,11 +191,37 @@ void gameLoop() {
 	} while (opt != 'G');
 }
 
+double calculateExperienceForLevel(int level) {
+    return level * level * 100; // (nível^2 * 100)
+}
+
+void checkLevelUp(Player *player) {
+    while (player->level < MAX_LEVEL && player->experience >= calculateExperienceForLevel(player->level)) {
+        player->level++;
+        printf("Parabéns! Você subiu para o nível %d!\n", player->level);
+    }
+}
+
+void defeatEnemy(Player *player, double enemyExperience) {
+    player->experience += enemyExperience;
+    printf("Você ganhou %.2f XP! Total: %.2f XP\n", enemyExperience, player->experience);
+    checkLevelUp(player);
+}
+
 void printStartFight(Room *currentRoom, Player *player) {
 	printf("Seu HP: %.2f | MP: %.2f\n", player->health, player->mana);
 
 	printf("%s aparece! HP: %.2f | ATK: %.2f\n", currentRoom->enemy.name,
 			currentRoom->enemy.health, currentRoom->enemy.attack);
+}
+
+void printSpellBar(Player *player){
+	printf("Spells: \n");
+	for (int i = 0; i < player->spellCount; i++) {
+		printf("ID: %d, Nome: %s, Dano: %.2f, Cooldown: %d\n",
+				player->spells[i].id, player->spells[i].name,
+				player->spells[i].damage, player->spells[i].cooldown);
+	}
 }
 
 void freeRoomList(Room *head) { // just in case

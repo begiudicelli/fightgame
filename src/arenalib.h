@@ -8,6 +8,9 @@
 #include <stdbool.h>
 #include <time.h>
 
+#define MAX_SPELLS 6
+#define MAX_LEVEL 100
+
 typedef struct Spell{
 	int id;
 	char *name;
@@ -20,8 +23,11 @@ typedef struct Player{
 	char *name;
 	double health;
 	double mana;
-	Spell spells[6];
+	Spell spells[MAX_SPELLS];
 	int spellCount;
+	double gold;
+	double experience;
+	int level;
 }Player;
 
 typedef struct Enemy{
@@ -29,6 +35,7 @@ typedef struct Enemy{
 	char *name;
 	double health;
 	double attack;
+	double experience;
 }Enemy;
 
 typedef struct Room{
@@ -39,11 +46,19 @@ typedef struct Room{
 
 Room* createRoom(int id, Enemy *enemy);
 void addRoom(Room **head, int id, Enemy *enemy);
-Enemy* createEnemy(int id, const char *name, double health, double attack);
+Enemy* createEnemy(int id, const char *name, double health, double attack, double experience);
 Enemy* getRandomEnemy();
 void battle(Player *player, Enemy *enemy);
 void gameLoop();
+
+
 void printStartFight(Room* currentRoom, Player *player);
+void printSpellBar(Player *player);
+
+//LEVEL
+void defeatEnemy(Player *player, double enemyExperience);
+void checkLevelUp(Player *player);
+double calculateExperienceForLevel(int level);
 
 
 #endif
