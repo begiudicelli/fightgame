@@ -9,9 +9,6 @@ int main(void) {
 
 	initializePlayerSpells(player);
 
-	Enemy *initialEnemy = getRandomEnemy();
-	addRoom(&roomList, 1, initialEnemy);
-
 	char opt;
 	do {
 		player->health = player->maxHealth;
@@ -29,6 +26,9 @@ int main(void) {
 		case 'A':
 			while (player->health > 0) {
 				Room *currentRoom = roomList;
+				Enemy *initialEnemy = getRandomEnemy();
+				addRoom(&roomList, 1, initialEnemy);
+
 				while (currentRoom != NULL) {
 					if (currentRoom->enemy.health > 0) {
 						printStartFight(currentRoom, player);
@@ -38,13 +38,18 @@ int main(void) {
 						Enemy *newEnemy = getRandomEnemy();
 						addRoom(&roomList, currentRoom->id + 1, newEnemy);
 						currentRoom = currentRoom->next;
-					} else { // DIES
+					} else {
+						printf("Você morreu! Limpando a lista de salas...\n");
+						freeRoomList(currentRoom);
+						roomList = NULL;
 						break;
 					}
 				}
 			}
 			break;
 		case 'B':
+			break;
+		case 'C':
 			break;
 		case 'G':
 			printf("\nPrograma finalizado.");

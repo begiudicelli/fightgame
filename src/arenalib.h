@@ -64,14 +64,12 @@ bool useSpell(Player *player, Enemy *enemy, int spellId);
 //Rooms
 Room* createRoom(int id, Enemy *enemy);
 void addRoom(Room **head, int id, Enemy *enemy);
+void freeRoomList(Room *head);
 
 //Battle
 void battle(Player *player, Enemy *enemy);
 void printStartFight(Room* currentRoom, Player *player);
 void printSpellBar(Player *player);
-
-
-
 
 
 #endif

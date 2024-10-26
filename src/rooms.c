@@ -25,7 +25,6 @@ void freeRoomList(Room *head) { // just in case
 	while (head != NULL) {
 		Room *temp = head;
 		head = head->next;
-		free(temp->enemy.name);
 		free(temp);
 	}
 }
