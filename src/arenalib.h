@@ -22,6 +22,7 @@ typedef struct Spell{
 typedef struct Player{
 	char *name;
 	double health;
+	double maxHealth;
 	double mana;
 	Spell spells[MAX_SPELLS];
 	int spellCount;
@@ -36,6 +37,7 @@ typedef struct Enemy{
 	double health;
 	double attack;
 	double experience;
+	double gold;
 }Enemy;
 
 typedef struct Room{
@@ -44,21 +46,32 @@ typedef struct Room{
 	struct Room *next;
 }Room;
 
+//Player
+Player* createPlayer(const char *name, double health, double mana);
+void initializePlayerSpells(Player *player);
+void defeatEnemy(Player *player, double enemyExperience, double enemyGold);
+void checkLevelUp(Player *player);
+double calculateExperienceForLevel(int level);
+
+//Enemy
+Enemy* createEnemy(int id, const char *name, double health, double attack, double experience, double gold);
+Enemy* getRandomEnemy();
+
+//Spells
+Spell createSpell(int id, const char *name, double damage, int cooldown);
+bool useSpell(Player *player, Enemy *enemy, int spellId);
+
+//Rooms
 Room* createRoom(int id, Enemy *enemy);
 void addRoom(Room **head, int id, Enemy *enemy);
-Enemy* createEnemy(int id, const char *name, double health, double attack, double experience);
-Enemy* getRandomEnemy();
+
+//Battle
 void battle(Player *player, Enemy *enemy);
-void gameLoop();
-
-
 void printStartFight(Room* currentRoom, Player *player);
 void printSpellBar(Player *player);
 
-//LEVEL
-void defeatEnemy(Player *player, double enemyExperience);
-void checkLevelUp(Player *player);
-double calculateExperienceForLevel(int level);
+
+
 
 
 #endif
