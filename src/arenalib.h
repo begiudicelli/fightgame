@@ -11,6 +11,18 @@
 #define MAX_SPELLS 6
 #define MAX_LEVEL 100
 
+typedef struct Item {
+    int id;
+    char *name;
+    int amount;
+    struct Item *next;
+} Item;
+
+typedef struct Inventory {
+    Item *head;
+    int itemCount;
+} Inventory;
+
 typedef struct Spell{
 	int id;
 	char *name;
@@ -29,6 +41,7 @@ typedef struct Player{
 	double gold;
 	double experience;
 	int level;
+	Inventory *inventory;
 }Player;
 
 typedef struct Enemy{
@@ -70,6 +83,13 @@ void freeRoomList(Room *head);
 void battle(Player *player, Enemy *enemy);
 void printStartFight(Room* currentRoom, Player *player);
 void printSpellBar(Player *player);
+
+//Item
+Inventory* createInventory();
+void addItem(Inventory *inventory, int id, const char *name);
+bool removeItem(Inventory *inventory, int id);
+void listItems(Inventory *inventory);
+Item getRandomItem();
 
 
 #endif

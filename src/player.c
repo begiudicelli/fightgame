@@ -10,13 +10,15 @@ Player* createPlayer(const char *name, double health, double mana) {
 	newPlayer->experience = 0;
 	newPlayer->gold = 0;
 	newPlayer->level = 1;
+	initializePlayerSpells(newPlayer); //isso pode ser utilizado p inicializar com outros spells
+	newPlayer->inventory = createInventory();
 	return newPlayer;
 }
 
 void initializePlayerSpells(Player *player) {
-	const char *spellNames[] = { "Fireball", "Lightning Bolt", "Healing Spell",
+	const char *spellNames[] = { "Fireball", "Lightning Bolt", "Rock Throw",
 			"Icebolt", "Wind Slash", "Earthquake" };
-	const double spellDamages[] = { 25, 30, -20, 40, 15, 50 };
+	const double spellDamages[] = { 25, 30, 20, 40, 15, 50 };
 	const int spellCooldowns[] = { 1, 2, 5, 3, 1, 8 };
 
 	player->spellCount = 0;

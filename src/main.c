@@ -7,11 +7,11 @@ int main(void) {
 	Room *roomList = NULL;
 	Player *player = createPlayer("Belnaldo", 100, 60);
 
-	initializePlayerSpells(player);
 
 	char opt;
 	do {
 		player->health = player->maxHealth;
+		listItems(player->inventory);
 		printf("Jogador: %s | Level: %d | Experiencia: %.2f | Gold: %.2f | Max HP: %.2f | Max MP: %.2f\n",
 				player->name, player->level, player->experience, player->gold,
 				player->maxHealth, player->mana);
@@ -21,6 +21,7 @@ int main(void) {
 		printf("G - Finalizar\n");
 		printf("Escolha uma opcao: ");
 		scanf(" %c", &opt);
+		opt = toupper(opt);
 
 		switch (opt) {
 		case 'A':
@@ -39,7 +40,7 @@ int main(void) {
 						addRoom(&roomList, currentRoom->id + 1, newEnemy);
 						currentRoom = currentRoom->next;
 					} else {
-						printf("Você morreu! Limpando a lista de salas...\n");
+						printf("Sala atingida: %d Limpando a lista de salas.\n", currentRoom->id);
 						freeRoomList(currentRoom);
 						roomList = NULL;
 						break;
