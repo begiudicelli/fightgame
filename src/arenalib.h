@@ -14,6 +14,7 @@
 typedef struct Item {
     int id;
     char *name;
+    float dropChance;
     int amount;
     struct Item *next;
 } Item;
@@ -22,6 +23,12 @@ typedef struct Inventory {
     Item *head;
     int itemCount;
 } Inventory;
+
+typedef struct ShopItem {
+    Item item;
+    float price;
+} ShopItem;
+
 
 typedef struct Spell{
 	int id;
@@ -62,7 +69,7 @@ typedef struct Room{
 //Player
 Player* createPlayer(const char *name, double health, double mana);
 void initializePlayerSpells(Player *player);
-void defeatEnemy(Player *player, double enemyExperience, double enemyGold);
+void defeatEnemy(Player *player, Enemy *enemy);
 void checkLevelUp(Player *player);
 double calculateExperienceForLevel(int level);
 
@@ -90,6 +97,8 @@ void addItem(Inventory *inventory, int id, const char *name);
 bool removeItem(Inventory *inventory, int id);
 void listItems(Inventory *inventory);
 Item getRandomItem();
+void dropItem(Player *player);
+void displayShop(Player *player);
 
 
 #endif

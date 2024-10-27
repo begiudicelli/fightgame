@@ -13,7 +13,7 @@ void battle(Player *player, Enemy *enemy) {
 
 		if (enemy->health <= 0) {
 			printf("Você derrotou %s!\n\n", enemy->name);
-			defeatEnemy(player, enemy->experience, enemy->gold);
+			defeatEnemy(player, enemy);
 			for (int i = 0; i < player->spellCount; i++) { // cleans cooldown
 				player->spells[i].cooldown = 0;
 			}
@@ -41,19 +41,20 @@ void battle(Player *player, Enemy *enemy) {
 	}
 }
 
-void defeatEnemy(Player *player, double enemyExperience, double enemyGold) {
-	player->experience += enemyExperience;
-	player->gold += enemyGold;
-	printf("Você ganhou %.2f XP! Total: %.2f XP\n", enemyExperience,
-			player->experience);
-	printf("Você ganhou %.2f GOLD! Total: %.2f GOLD\n", enemyGold,
-			player->gold);
+void defeatEnemy(Player *player, Enemy *enemy) {
+	player->experience += enemy->experience;
+	player->gold += enemy->gold;
 
-	 Item randomItem = getRandomItem();
-	 addItem(player->inventory, randomItem.id, randomItem.name);
+	dropItem(player);
+
+	printf("Você ganhou %.2f XP! Total: %.2f XP\n", enemy->experience,
+			player->experience);
+	printf("Você ganhou %.2f GOLD! Total: %.2f GOLD\n", enemy->gold,
+			player->gold);
 
 	checkLevelUp(player);
 }
+
 
 void printStartFight(Room *currentRoom, Player *player) {
 	printf("%s HP: %.2f | MP: %.2f\n", player->name, player->health,

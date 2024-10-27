@@ -49,6 +49,7 @@ int main(void) {
 			}
 			break;
 		case 'B':
+			displayShop(player);
 			break;
 		case 'C':
 			break;
