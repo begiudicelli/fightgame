@@ -10,11 +10,13 @@
 
 #define MAX_SPELLS 6
 #define MAX_LEVEL 100
+#define MAX_SHOP_ITEMS 3
 
 typedef struct Item {
     int id;
     char *name;
     float dropChance;
+    float value;
     int amount;
     struct Item *next;
 } Item;
@@ -27,8 +29,14 @@ typedef struct Inventory {
 typedef struct ShopItem {
     Item item;
     float price;
+    int type;
 } ShopItem;
 
+typedef struct EquippedItem{
+	Item *wand;
+	Item *hat;
+	Item *spellbook;
+}EquippedItem;
 
 typedef struct Spell{
 	int id;
@@ -49,6 +57,8 @@ typedef struct Player{
 	double experience;
 	int level;
 	Inventory *inventory;
+	EquippedItem equippedItems;
+	bool purchasedItems[MAX_SHOP_ITEMS];
 }Player;
 
 typedef struct Enemy{
@@ -100,5 +110,9 @@ Item getRandomItem();
 void dropItem(Player *player);
 void displayShop(Player *player);
 
+void equippItem(Player *player, Item *item);
+void displayEquippableItems(Player *player);
+void listEquippedItems(Player *player);
+void equipItemFromInventory(Player *player);
 
 #endif

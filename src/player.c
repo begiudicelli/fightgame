@@ -12,6 +12,17 @@ Player* createPlayer(const char *name, double health, double mana) {
 	newPlayer->level = 1;
 	initializePlayerSpells(newPlayer); //isso pode ser utilizado p inicializar com outros spells
 	newPlayer->inventory = createInventory();
+
+	//isso aqui ta ficando grotesco
+
+    newPlayer->equippedItems.wand = NULL;
+    newPlayer->equippedItems.hat = NULL;
+    newPlayer->equippedItems.spellbook = NULL;
+
+    for (int i = 0; i < MAX_SHOP_ITEMS; i++) {
+        newPlayer->purchasedItems[i] = false;
+    }
+
 	return newPlayer;
 }
 

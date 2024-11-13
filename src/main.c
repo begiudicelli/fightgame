@@ -7,7 +7,6 @@ int main(void) {
 	Room *roomList = NULL;
 	Player *player = createPlayer("Belnaldo", 100, 60);
 
-
 	char opt;
 	do {
 		player->health = player->maxHealth;
@@ -18,6 +17,8 @@ int main(void) {
 		printf("Opcoes: \n");
 		printf("A - Lutar\n");
 		printf("B - Shop\n");
+		printf("C - Equipar items\n");
+		printf("D - Listar itens equipados\n");
 		printf("G - Finalizar\n");
 		printf("Escolha uma opcao: ");
 		scanf(" %c", &opt);
@@ -52,6 +53,10 @@ int main(void) {
 			displayShop(player);
 			break;
 		case 'C':
+			equipItemFromInventory(player);
+			break;
+		case 'D':
+			listEquippedItems(player);
 			break;
 		case 'G':
 			printf("\nPrograma finalizado.");
