@@ -10,6 +10,7 @@ Player* createPlayer(const char *name, double health, double mana) {
 	newPlayer->experience = 0;
 	newPlayer->gold = 0;
 	newPlayer->level = 1;
+	newPlayer->critChance = 0;
 	initializePlayerSpells(newPlayer); //isso pode ser utilizado p inicializar com outros spells
 	newPlayer->inventory = createInventory();
 

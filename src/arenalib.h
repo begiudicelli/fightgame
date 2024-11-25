@@ -10,14 +10,14 @@
 
 #define MAX_SPELLS 6
 #define MAX_LEVEL 100
-#define MAX_SHOP_ITEMS 3
+#define MAX_SHOP_ITEMS 15
 
 typedef struct Item {
     int id;
     char *name;
-    float dropChance;
     float value;
-    int amount;
+    float price;
+    int type;
     struct Item *next;
 } Item;
 
@@ -25,12 +25,6 @@ typedef struct Inventory {
     Item *head;
     int itemCount;
 } Inventory;
-
-typedef struct ShopItem {
-    Item item;
-    float price;
-    int type;
-} ShopItem;
 
 typedef struct EquippedItem{
 	Item *wand;
@@ -56,6 +50,7 @@ typedef struct Player{
 	double gold;
 	double experience;
 	int level;
+	float critChance;
 	Inventory *inventory;
 	EquippedItem equippedItems;
 	bool purchasedItems[MAX_SHOP_ITEMS];
@@ -68,6 +63,7 @@ typedef struct Enemy{
 	double attack;
 	double experience;
 	double gold;
+	int level;
 }Enemy;
 
 typedef struct Room{
@@ -86,6 +82,7 @@ double calculateExperienceForLevel(int level);
 //Enemy
 Enemy* createEnemy(int id, const char *name, double health, double attack, double experience, double gold);
 Enemy* getRandomEnemy();
+void adjustEnemyStatsForLevel(Player *player, Enemy *enemy);
 
 //Spells
 Spell createSpell(int id, const char *name, double damage, int cooldown);
@@ -103,7 +100,7 @@ void printSpellBar(Player *player);
 
 //Item
 Inventory* createInventory();
-void addItem(Inventory *inventory, int id, const char *name);
+void addItem(Inventory *inventory, int id, const char *name, float value, float price, int type);
 bool removeItem(Inventory *inventory, int id);
 void listItems(Inventory *inventory);
 Item getRandomItem();

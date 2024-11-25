@@ -44,9 +44,6 @@ void battle(Player *player, Enemy *enemy) {
 void defeatEnemy(Player *player, Enemy *enemy) {
 	player->experience += enemy->experience;
 	player->gold += enemy->gold;
-
-	dropItem(player);
-
 	printf("Você ganhou %.2f XP! Total: %.2f XP\n", enemy->experience,
 			player->experience);
 	printf("Você ganhou %.2f GOLD! Total: %.2f GOLD\n", enemy->gold,

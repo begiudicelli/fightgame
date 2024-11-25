@@ -1,20 +1,29 @@
 #include "arenalib.h"
 
 Item itemDatabase[] = {
-    {1, "Pocao de vida pequena", 0.3f, 5},
-    {2, "Pocao de vida media", 0.2f, 10},
-    {3, "Pocao de vida grande", 0.1f, 15}
+    // Wands (Tipo 1)
+    {1, "Cajado de Madeira", 5.0f, 10.0f, 1, NULL},
+    {2, "Cajado de Ferro", 10.0f, 20.0f, 1, NULL},
+    {3, "Cajado de Prata", 15.0f, 40.0f, 1, NULL},
+    {4, "Cajado de Ouro", 20.0f, 60.0f, 1, NULL},
+    {5, "Cajado Mágico Supremo", 30.0f, 100.0f, 1, NULL},
+
+    // Hats (Tipo 2)
+    {6, "Chapéu de Feiticeiro Iniciante", 5.0f, 20.0f, 2, NULL},
+    {7, "Chapéu de Feiticeiro Adepto", 10.0f, 40.0f, 2, NULL},
+    {8, "Chapéu de Feiticeiro Avançado", 15.0f, 60.0f, 2, NULL},
+    {9, "Chapéu de Feiticeiro Arcanista", 20.0f, 80.0f, 2, NULL},
+    {10, "Chapéu de Feiticeiro Supremo", 30.0f, 120.0f, 2, NULL},
+
+    // Spellbooks (Tipo 3)
+    {11, "Livro de Feitiços Iniciante", 10.0f, 30.0f, 3, NULL},
+    {12, "Livro de Feitiços Adepto", 15.0f, 50.0f, 3, NULL},
+    {13, "Livro de Feitiços Avançado", 20.0f, 70.0f, 3, NULL},
+    {14, "Livro de Feitiços Arcanista", 25.0f, 90.0f, 3, NULL},
+    {15, "Livro de Feitiços Supremo", 35.0f, 150.0f, 3, NULL}
 };
 
-ShopItem shopDatabase[] = {
-    {{4, "Cajado madeira", 0, 10}, 10.0f, 1},
-    {{5, "Chapeu feiticeiro iniciante", 0, 20}, 20.0f, 2},
-    {{6, "Livro de feitiços", 0, 30}, 30.0f, 3}
-};
-
-const int shopItemCount = sizeof(shopDatabase) / sizeof(shopDatabase[0]);
-
-const int itemPoolSize = sizeof(itemDatabase) / sizeof(itemDatabase[0]);
+const int itemDatabaseCount = sizeof(itemDatabase) / sizeof(itemDatabase[0]);
 
 Inventory* createInventory() {
     Inventory *inventory = (Inventory*)malloc(sizeof(Inventory));
@@ -23,23 +32,14 @@ Inventory* createInventory() {
     return inventory;
 }
 
-void addItem(Inventory *inventory, int id, const char *name) {
-    Item *current = inventory->head;
-    while (current != NULL) {
-        if (current->id == id) {
-            current->amount++;
-            printf("Item %s já existe, quantidade aumentada para %d.\n", name, current->amount);
-            return;
-        }
-        current = current->next;
-    }
+void addItem(Inventory *inventory, int id, const char *name, float value, float price, int type) {
     Item *newItem = (Item*)malloc(sizeof(Item));
     newItem->id = id;
     newItem->name = strdup(name);
-    newItem->amount = 1;
+    newItem->value = value;
+    newItem->price = price;
+    newItem->type = type;
     newItem->next = inventory->head;
-    newItem->dropChance = 0.0f;
-    newItem->value = 0;
     inventory->head = newItem;
     inventory->itemCount++;
 }
@@ -69,86 +69,61 @@ bool removeItem(Inventory *inventory, int id) {
 void listItems(Inventory *inventory) {
     Item *current = inventory->head;
     while (current != NULL) {
-        printf("Item ID: %d, Name: %s Quantidade: %d\n", current->id, current->name, current->amount);
+        printf("Item ID: %d, Name: %s\n", current->id, current->name);
         current = current->next;
-    }
-}
-
-Item getRandomItem() {
-    int randomIndex = rand() % itemPoolSize;
-    return itemDatabase[randomIndex];
-}
-
-void dropItem(Player *player) {
-    for (int i = 0; i < itemPoolSize; i++) {
-        float chance = (float)rand() / RAND_MAX; // Gera um número aleatório entre 0 e 1
-        if (chance < itemDatabase[i].dropChance) {
-            addItem(player->inventory, itemDatabase[i].id, itemDatabase[i].name);
-            printf("Você ganhou o item %s!\n", itemDatabase[i].name);
-        } else {
-            printf("Item %s não foi dropado.\n", itemDatabase[i].name);
-        }
     }
 }
 
 void displayShop(Player *player) {
     printf("Bem-vindo à loja! Aqui estão os itens disponíveis:\n");
-
-    // Lista os itens da loja
-    for (int i = 0; i < shopItemCount; i++) {
-        // Verifica se o item já foi comprado
+    for (int i = 0; i < MAX_SHOP_ITEMS; i++) {
         if (player->purchasedItems[i]) {
-            printf("Item %s já foi comprado anteriormente.\n", shopDatabase[i].item.name);
+            printf("Item %s já foi comprado anteriormente.\n", itemDatabase[i].name);
         } else {
             printf("ID: %d, Nome: %s, Preço: %.2f GOLD\n",
-                   shopDatabase[i].item.id,
-                   shopDatabase[i].item.name,
-                   shopDatabase[i].price);
+                   itemDatabase[i].id, itemDatabase[i].name, itemDatabase[i].price);
         }
     }
-
     int itemId;
     printf("Digite o ID do item que você deseja comprar: ");
     scanf("%d", &itemId);
 
-    for (int i = 0; i < shopItemCount; i++) {
-        if (shopDatabase[i].item.id == itemId) {
+    for (int i = 0; i < MAX_SHOP_ITEMS; i++) {
+        if (itemDatabase[i].id == itemId) {
             if (player->purchasedItems[i]) {
                 printf("Este item já foi comprado!\n");
                 return;
             }
-
-            if (player->gold >= shopDatabase[i].price) {
-                player->gold -= shopDatabase[i].price;
-                addItem(player->inventory, shopDatabase[i].item.id, shopDatabase[i].item.name);
-
+            if (player->gold >= itemDatabase[i].price) {
+                player->gold -= itemDatabase[i].price;
+                addItem(player->inventory, itemDatabase[i].id, itemDatabase[i].name,
+                        itemDatabase[i].value, itemDatabase[i].price, itemDatabase[i].type);
                 player->purchasedItems[i] = true;
-
-                printf("Você comprou %s!\n", shopDatabase[i].item.name);
+                printf("Você comprou %s!\n", itemDatabase[i].name);
             } else {
-                printf("Você não tem ouro suficiente para comprar %s!\n", shopDatabase[i].item.name);
+                printf("Você não tem ouro suficiente para comprar %s!\n", itemDatabase[i].name);
             }
             return;
         }
     }
-
     printf("Item não encontrado!\n");
 }
 
-
 void displayEquippedItems(Player *player) {
     printf("Itens Equipáveis no Inventário:\n");
-
     Item *current = player->inventory->head;
     while (current != NULL) {
-        for (int i = 0; i < shopItemCount; i++) {
-            if (current->id == shopDatabase[i].item.id) {
-                printf("ID: %d, Nome: %s\n", current->id, current->name);
-            }
+        if (current->type == 1) {
+            printf("ID: %d, Nome: %s (Varinha)\n", current->id, current->name);
+        } else if (current->type == 2) {
+            printf("ID: %d, Nome: %s (Chapéu)\n", current->id, current->name);
+        } else if (current->type == 3) {
+            printf("ID: %d, Nome: %s (Livro de Feitiços)\n", current->id, current->name);
         }
         current = current->next;
     }
 }
+
 
 void equipItemFromInventory(Player *player) {
     displayEquippedItems(player);
@@ -161,7 +136,6 @@ void equipItemFromInventory(Player *player) {
     while (current != NULL) {
         if (current->id == itemId) {
             equippItem(player, current);
-            printf("Você equipou %s!\n", current->name);
             return;
         }
         current = current->next;
@@ -169,17 +143,23 @@ void equipItemFromInventory(Player *player) {
     printf("Item não encontrado no inventário.\n");
 }
 
+
 void equippItem(Player *player, Item *item) {
-    if (item->id == 4) { // Por exemplo, varinha
-        player->equippedItems.wand = item;
+    if (item->type == 1) {
+    	player->critChance += item->value / 100.0;
+    	printf("Você equipou %s (Varinha)! Chance de Crítico aumentada para %.2f%%!\n", item->name, player->critChance * 100);
     }
-    if (item->id == 5) { // Por exemplo, chapéu
+    if (item->type == 2) {
         player->equippedItems.hat = item;
+        player->health += item->value;
+        printf("Você equipou %s (Chapéu)! Aumentou sua vida em %.2f\n", item->name, item->value);
     }
-    if (item->id == 6) { // Por exemplo, livro de feitiços
+    if (item->type == 3) {
         player->equippedItems.spellbook = item;
+        printf("Você equipou %s como seu livro de feitiços!\n", item->name);
     }
 }
+
 
 void listEquippedItems(Player *player) {
     printf("Itens Equipados:\n");
