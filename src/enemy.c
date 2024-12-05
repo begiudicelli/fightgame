@@ -5,16 +5,7 @@ Enemy enemyPool[] = {
     { 2, "Orc", 50, 10, 20, 40, 1 },
     { 3, "Troll", 80, 15, 40, 60, 1 },
     { 4, "Dragon", 120, 20, 80, 120, 1 },
-    { 5, "Skeleton", 40, 8, 15, 30, 1 },
-    { 6, "Vampire", 60, 12, 25, 50, 1 },
-    { 7, "Werewolf", 70, 18, 35, 70, 1 },
-    { 8, "Golem", 100, 25, 50, 90, 1 },
-    { 9, "Minotaur", 90, 22, 45, 80, 1 },
-    { 10, "Manticore", 110, 30, 60, 100, 1 },
-    { 11, "Phoenix", 130, 35, 70, 150, 1 },
-    { 12, "Hydra", 150, 40, 100, 200, 1 },
-    { 13, "Lich", 180, 50, 150, 250, 1 },
-    { 14, "Behemoth", 200, 60, 200, 300, 1 }
+    { 5, "Skeleton", 40, 8, 15, 30, 1 }
 };
 
 const int enemyPoolSize = sizeof(enemyPool) / sizeof(enemyPool[0]);

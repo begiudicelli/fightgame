@@ -10,7 +10,6 @@ int main(void) {
 	char opt;
 	do {
 		player->health = player->maxHealth;
-		listItems(player->inventory);
 		printf("Jogador: %s | Level: %d | Experiencia: %.2f | Gold: %.2f | Max HP: %.2f | Max MP: %.2f\n",
 				player->name, player->level, player->experience, player->gold,
 				player->maxHealth, player->mana);

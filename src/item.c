@@ -146,6 +146,7 @@ void equipItemFromInventory(Player *player) {
 
 void equippItem(Player *player, Item *item) {
     if (item->type == 1) {
+    	player->equippedItems.wand = item;
     	player->critChance += item->value / 100.0;
     	printf("Você equipou %s (Varinha)! Chance de Crítico aumentada para %.2f%%!\n", item->name, player->critChance * 100);
     }
