@@ -48,7 +48,7 @@ double calculateExperienceForLevel(int level) {
 void checkLevelUp(Player *player) {
     while (player->level < MAX_LEVEL && player->experience >= calculateExperienceForLevel(player->level)) {
         player->level++;
-        printf("Parabéns! Você subiu para o nível %d!\n", player->level);
+        printf("Parabens! Voce subiu para o nivel %d!\n", player->level);
         //add gains
         player->maxHealth += 20;
     }

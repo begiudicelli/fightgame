@@ -12,12 +12,12 @@ Spell createSpell(int id, const char *name, double damage, int cooldown) {
 
 bool useSpell(Player *player, Enemy *enemy, int spellId) {
     if (spellId < 0 || spellId >= player->spellCount) {
-        printf("ID de feitiço inválido!\n");
+        printf("ID de feitico invalido!\n");
         return false;
     }
 
     if (player->spells[spellId].cooldown > 0) {
-        printf("O feitiço %s está em cooldown por %d turnos!\n",
+        printf("O feitico %s esta em cooldown por %d turnos!\n",
                 player->spells[spellId].name, player->spells[spellId].cooldown);
         return false;
     }
@@ -27,7 +27,7 @@ bool useSpell(Player *player, Enemy *enemy, int spellId) {
     double finalDamage = player->spells[spellId].damage;
     if (randomChance <= player->critChance) {
         finalDamage *= 2.0;
-        printf("CRÍTICO! O feitiço causou %.2f de dano!\n", finalDamage);
+        printf("CRITICO! O feitico causou %.2f de dano!\n", finalDamage);
     }
 
     enemy->health -= finalDamage;

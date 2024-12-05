@@ -12,7 +12,7 @@ void battle(Player *player, Enemy *enemy) {
 		used = useSpell(player, enemy, spellId);
 
 		if (enemy->health <= 0) {
-			printf("Você derrotou %s!\n\n", enemy->name);
+			printf("Voce derrotou %s!\n\n", enemy->name);
 			defeatEnemy(player, enemy);
 			for (int i = 0; i < player->spellCount; i++) { // cleans cooldown
 				player->spells[i].cooldown = 0;
@@ -44,9 +44,9 @@ void battle(Player *player, Enemy *enemy) {
 void defeatEnemy(Player *player, Enemy *enemy) {
 	player->experience += enemy->experience;
 	player->gold += enemy->gold;
-	printf("Você ganhou %.2f XP! Total: %.2f XP\n", enemy->experience,
+	printf("Voce ganhou %.2f XP! Total: %.2f XP\n", enemy->experience,
 			player->experience);
-	printf("Você ganhou %.2f GOLD! Total: %.2f GOLD\n", enemy->gold,
+	printf("Voce ganhou %.2f GOLD! Total: %.2f GOLD\n", enemy->gold,
 			player->gold);
 
 	checkLevelUp(player);
